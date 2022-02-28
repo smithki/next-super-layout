@@ -48,14 +48,14 @@ const LayoutContext = /*@__PURE__*/ createContext<any>({});
  * @example
  * ```tsx
  * // layouts/my-layout.tsx
- * import { createLayout } from 'layouts/base';
+ * import { createLayout } from 'next-layout';
  *
  * const myLayout = createLayout({
- *   name: 'myLayout', // something unique amongst all layouts
+ *   name: 'myLayout', // choose something unique from amongst all your layouts
  *
  *   getLayout: (page, data) => {
  *     // `page` is the React element being wrapped.
- *     // `data` is the data returned by the `getData` function.
+ *     // `data` is the data returned from the `getData` function.
  *
  *     return (<>
  *       <MyHeader />
@@ -71,9 +71,9 @@ const LayoutContext = /*@__PURE__*/ createContext<any>({});
  * });
  *
  * // pages/some/path.tsx
- * import { myLayout } from 'layouts/my-layout';
+ * import { myLayout } from 'next-layout';
  *
- * export default myLayout.withLayout((props) => {
+ * export default myLayout.wrapPage((props) => {
  *   return <>{...}</>;
  * });
  *
@@ -178,9 +178,9 @@ const getOptionsFromLayout = (layout: Layout<any>): CreateLayoutOptions<any> => 
  * @example
  * ```tsx
  * // pages/some/path.tsx
- * import { combineLayouts } from 'layouts/base';
- * import { myLayout } from 'layouts/my-layout';
- * import { myOtherLayout } from 'layouts/my-other-layout';
+ * import { combineLayouts } from 'next-layout';
+ * import { myLayout } from './layouts/my-layout';
+ * import { myOtherLayout } from './layouts/my-other-layout';
  *
  * const combinedLayout = combineLayouts(myLayout, myOtherLayout);
  *
@@ -232,6 +232,8 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
  * @example
  * ```ts
  * // pages/_app
+ * import { LayoutProvider } from 'next-layout';
+ *
  * export default function App(props) {
  *   return <LayoutProvider {...props} />;
  * }
