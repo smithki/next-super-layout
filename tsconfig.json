@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "jsx": "react",
+    "module": "esnext",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true, // We use `esnext` to build
+  },
+
+  "include": [
+    ".eslintrc.js",
+    "**/*.ts",
+    "**/*.tsx",
+  ],
+}
