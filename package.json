@@ -34,6 +34,7 @@
     "@types/react": "^17.0.39",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "agadoo": "^2.0.0",
+    "auto": "^10.32.6",
     "esbuild": "^0.14.23",
     "eslint": "^7.14.0",
     "eslint-import-resolver-typescript": "^2.3.0",
@@ -55,5 +56,12 @@
     "react": "^17.0.2"
   },
   "packageManager": "yarn@3.2.0",
-  "prettier": "@ikscodes/prettier-config"
+  "prettier": "@ikscodes/prettier-config",
+  "repository": "smithki/next-super-layout",
+  "author": "Ian Smith <hello@iks.codes>",
+  "auto": {
+    "plugins": [
+      "npm"
+    ]
+  }
 }

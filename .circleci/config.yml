@@ -102,7 +102,7 @@ jobs:
       - *attach-workspace
       - run:
           name: Build modules
-          command: yarn run lib:build
+          command: yarn run build
       - persist_to_workspace:
           paths: *build-output-paths
           root: *workspace-root
