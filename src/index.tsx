@@ -48,7 +48,7 @@ const LayoutContext = /*@__PURE__*/ createContext<any>({});
  * @example
  * ```tsx
  * // layouts/my-layout.tsx
- * import { createLayout } from 'next-layout';
+ * import { createLayout } from 'next-super-layout';
  *
  * const myLayout = createLayout({
  *   name: 'myLayout', // choose something unique from amongst all your layouts
@@ -71,7 +71,7 @@ const LayoutContext = /*@__PURE__*/ createContext<any>({});
  * });
  *
  * // pages/some/path.tsx
- * import { myLayout } from 'next-layout';
+ * import { myLayout } from 'next-super-layout';
  *
  * export default myLayout.wrapPage((props) => {
  *   return <>{...}</>;
@@ -151,7 +151,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
       if (ctx[layoutKey] == null) {
         throw new Error(
-          `[next-layout: useData -> "${options.name}"] You're seeing this error for one of three reasons:
+          `[next-super-layout: useData -> "${options.name}"] You're seeing this error for one of three reasons:
   - You forgot to wrap \`getStaticProps\` or \`getServerSideProps\` with the wrapper function for this layout.
   - \`useData()\` was called from a React tree not wrapped with this layout at the NextJS page-level.
   - \`useData()\` was called within \`getLayout()\` in the definition for this layout.
@@ -178,7 +178,7 @@ const getOptionsFromLayout = (layout: Layout<any>): CreateLayoutOptions<any> => 
  * @example
  * ```tsx
  * // pages/some/path.tsx
- * import { combineLayouts } from 'next-layout';
+ * import { combineLayouts } from 'next-super-layout';
  * import { myLayout } from './layouts/my-layout';
  * import { myOtherLayout } from './layouts/my-other-layout';
  *
@@ -232,7 +232,7 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
  * @example
  * ```ts
  * // pages/_app
- * import { LayoutProvider } from 'next-layout';
+ * import { LayoutProvider } from 'next-super-layout';
  *
  * export default function App(props) {
  *   return <LayoutProvider {...props} />;
