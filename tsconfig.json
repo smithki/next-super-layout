@@ -3,10 +3,12 @@
     "target": "esnext",
     "jsx": "react",
     "module": "esnext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true, // We use `esnext` to build
+    "outDir": "dist",
+    "rootDir": "./src"
   },
 
   "include": [

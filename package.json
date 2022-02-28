@@ -3,9 +3,17 @@
   "description": "Convenient layout routes & React hooks for Next.js",
   "version": "0.1.0",
   "license": "MIT",
+  "sideEffects": false,
+  "scripts": {
+    "dev": "yarn clean && tsc -w",
+    "build": "yarn clean && tsc",
+    "clean": "rimraf dist"
+  },
   "devDependencies": {
     "@ikscodes/eslint-config": "latest",
     "@ikscodes/prettier-config": "latest",
+    "@types/node": "^17.0.21",
+    "@types/react": "^17.0.39",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "eslint": "^7.14.0",
     "eslint-import-resolver-typescript": "^2.3.0",
@@ -15,10 +23,13 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "next": "^12.1.0",
-    "prettier": "^2.2.0"
+    "prettier": "^2.2.0",
+    "react": "^17.0.2",
+    "rimraf": "^3.0.2"
   },
   "peerDependencies": {
-    "next": "^12.1.0"
+    "next": "^12.1.0",
+    "react": "^17.0.2"
   },
   "packageManager": "yarn@3.2.0",
   "prettier": "@ikscodes/prettier-config"
