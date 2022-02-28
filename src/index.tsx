@@ -39,7 +39,7 @@ export interface CreateLayoutOptions<Data> {
   getData?: (ctx: GetStaticPropsContext) => Promise<Data>;
 }
 
-const LayoutContext = /*@__PURE__*/ createContext<any>({});
+const LayoutContext = /* @__PURE__ */ createContext<any>({});
 
 /**
  * Creates a generic view for a layout, complete with layout-specific props,
@@ -87,7 +87,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
   return {
     // @ts-ignore - This is used internally; not exposed to public API.
-    '__layoutOptions': options,
+    __layoutOptions: options,
 
     wrapPage: (Page: any) => {
       Page.getLayout = ((Component, pageProps) => {

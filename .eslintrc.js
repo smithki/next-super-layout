@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['next', '@ikscodes/eslint-config'],
+  extends: ['@ikscodes/eslint-config'],
 
   parserOptions: {
     project: ['./tsconfig.json'],
