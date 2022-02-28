@@ -39,7 +39,7 @@ export interface CreateLayoutOptions<Data> {
   getData?: (ctx: GetStaticPropsContext) => Promise<Data>;
 }
 
-const LayoutContext = /* @__PURE__ */ createContext<any>({});
+const LayoutContext = /*@__PURE__*/ createContext<any>({});
 
 /**
  * Creates a generic view for a layout, complete with layout-specific props,
