@@ -78,7 +78,7 @@ _Voila!_
 
 ### Composing layouts
 
-With `next-super-layout`, it's painless to compose multiple layouts together using the `combineLayouts` function:
+With `next-super-layout`, it's effortless to compose multiple layouts together using the `combineLayouts` function:
 
 ```tsx
 // pages/some/path.tsx
