@@ -1,3 +1,19 @@
+# v0.1.4 (Tue Mar 01 2022)
+
+#### 🐛 Bug Fix
+
+- Readme updates [#5](https://github.com/smithki/next-super-layout/pull/5) ([@smithki](https://github.com/smithki))
+
+#### 🏠 Internal
+
+- Simplify build system [#4](https://github.com/smithki/next-super-layout/pull/4) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v0.1.3 (Tue Mar 01 2022)
 
 #### 🐛 Bug Fix
