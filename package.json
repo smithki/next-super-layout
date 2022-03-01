@@ -1,6 +1,6 @@
 {
   "name": "next-super-layout",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Convenient layout routes & React hooks for Next.js",
   "author": "Ian Smith <hello@iks.codes>",
   "repository": "smithki/next-super-layout",
@@ -13,7 +13,9 @@
     "require": "./dist/cjs/index.js"
   },
   "types": "./dist/types/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "yarn clean && run-p \"dev:**\" --print-label",
     "dev:cjs": "esbuild src/index.tsx --watch --bundle --external:react --outfile=dist/cjs/index.js --format=cjs",
