@@ -1,6 +1,6 @@
 {
   "name": "next-super-layout",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Convenient layout routes & React hooks for Next.js",
   "author": "Ian Smith <hello@iks.codes>",
   "repository": "smithki/next-super-layout",
