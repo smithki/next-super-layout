@@ -7,9 +7,6 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "emitDeclarationOnly": true, // We use `esbuild` to bundle output
-    "declaration": true,
-    "declarationDir": "dist/types"
   },
 
   "include": [
@@ -21,5 +18,13 @@
   "exclude": [
     "node_modules",
     "dist",
-  ]
+  ],
+
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+    "compilerOptions": {
+      "module": "commonjs",
+    }
+  },
 }
