@@ -1,3 +1,15 @@
+# v0.1.2 (Tue Mar 01 2022)
+
+#### 🐛 Bug Fix
+
+- Fix NPM publish action [#2](https://github.com/smithki/next-super-layout/pull/2) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v0.1.1 (Tue Mar 01 2022)
 
 #### 🐛 Bug Fix
