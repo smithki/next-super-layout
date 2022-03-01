@@ -13,6 +13,7 @@
     "require": "./dist/cjs/index.js"
   },
   "types": "./dist/types/index.d.ts",
+  "files": ["dist"],
   "scripts": {
     "dev": "yarn clean && run-p \"dev:**\" --print-label",
     "dev:cjs": "esbuild src/index.tsx --watch --bundle --external:react --outfile=dist/cjs/index.js --format=cjs",
