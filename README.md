@@ -1,8 +1,8 @@
 # 🗺 `next-super-layout`
 
-Next.js conveninently solves many of the headaches involved in modern React development. However, one of the fundamental pieces missing from Next.js is the ability to create clean, composable, and shareable layout abstractions. [There is some advice to be found in Next.js docs](https://nextjs.org/docs/basic-features/layouts), but no sufficient out-of-the-box abstraction. This problem only worsens when component-level data becomes necessary anywhere in your application; at which point your best bet is to "drill props" and deal with an unamanageable amount of `/pages` boilerplate. This project tries to solve the layouts problem with a simple, opinionated abstraction that plays nicely with existing Next.js conventions.
+Next.js conveniently solves many of the headaches involved with modern React development. However, one of the fundamental pieces still _missing_ from Next.js is the ability to create clean, composable, data-infused layouts. [There is some advice to be found in Next.js docs](https://nextjs.org/docs/basic-features/layouts), but no sufficient out-of-the-box abstraction. This problem only worsens when component-level data becomes necessary anywhere in your application; at which point your only option is to "drill props" and deal with increasing amounts of `/pages` boilerplate. This project tries to solve the layouts problem with a simple, opinionated abstraction that plays nicely with existing Next.js conventions.
 
-## Installation
+## 📦 Installation
 
 Using NPM:
 
@@ -16,9 +16,9 @@ Using Yarn:
 yarn add next-super-layout
 ```
 
-## Usage
+## 🛠 Usage
 
-Bootstrapping new layout objects is a cinch with the `createLayout` function. Simply give your layout a `name`, describe some UI with `getLayout`, and fetch some initial props data using `getData`. Here's an MVP example:
+Bootstrapping new layouts is a cinch using the `createLayout` function. Simply give your layout a `name`, describe some UI with `getLayout`, and fetch some initial props data using `getData`. Take a look:
 
 ```tsx
 // layouts/my-layout.tsx
@@ -44,7 +44,7 @@ const myLayout = createLayout({
 });
 ```
 
-Once you've created a layout object, we'll connect it to our Next.js page:
+Once we've created a layout, we'll connect it to a Next.js page:
 
 ```tsx
 // pages/some/path.tsx
@@ -59,11 +59,11 @@ export const getStaticProps = myLayout.wrapGetStaticProps(...);
 export const getServerSideProps = myLayout.wrapGetServerSideProps(...);
 ```
 
-If you need to fetch additional data for your page, you can define a custom `getStaticProps` or `getServerSideProps` function, then pass it as an argument to `myLayout.wrapGetStaticProps` or `myLayout.wrapGetServerSideProps`, respectively.
+Should you need to fetch additional data for your page, you can define a custom [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching/get-static-props) or [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props) function, then pass it to `Layout.wrapGetStaticProps` or `Layout.wrapGetServerSideProps`, respectively.
 
 ### Connecting `next-super-layout` to your Next.js application
 
-To make use of our layout-wrapped pages, we'll need to define a custom Next.js `_app`. Check this out:
+To make use of our layout-wrapped pages, we'll need to define a custom Next.js `_app`. Don't worry, it's pretty easy:
 
 ```tsx
 // pages/_app
@@ -78,7 +78,7 @@ _Voila!_
 
 ### Composing layouts
 
-With `next-super-layout` it's easy to compose multiple layouts together using the `combineLayouts` function:
+With `next-super-layout`, it's painless to compose multiple layouts together using the `combineLayouts` function:
 
 ```tsx
 // pages/some/path.tsx
@@ -114,6 +114,6 @@ function MyComponent() {
 }
 ```
 
-## License
+## ⚖️ License
 
 [MIT](./LICENSE)
