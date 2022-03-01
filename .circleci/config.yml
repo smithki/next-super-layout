@@ -33,21 +33,21 @@ aliases: [
     }
   },
 
-  # Filter pull requests not in "master" or "next" (development code)
+  # Filter pull requests not in "main" or "next" (development code)
   &filter-default-branches {
     filters: {
       branches: {
-        ignore: "/^master$|^next$/"
+        ignore: "/^main$|^next$/"
       }
     }
   },
 
-  # Filter pull requests in "master" or "next" only (production code).
+  # Filter pull requests in "main" or "next" only (production code).
   &filter-release-branches-only {
     filters: {
       branches: {
         only: [
-          "master",
+          "main",
           "next",
         ]
       }

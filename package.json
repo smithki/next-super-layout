@@ -1,7 +1,9 @@
 {
   "name": "next-super-layout",
-  "description": "Convenient layout routes & React hooks for Next.js",
   "version": "0.1.0",
+  "description": "Convenient layout routes & React hooks for Next.js",
+  "author": "Ian Smith <hello@iks.codes>",
+  "repository": "smithki/next-super-layout",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/cjs/index.js",
@@ -57,8 +59,6 @@
   },
   "packageManager": "yarn@3.2.0",
   "prettier": "@ikscodes/prettier-config",
-  "repository": "smithki/next-super-layout",
-  "author": "Ian Smith <hello@iks.codes>",
   "auto": {
     "plugins": [
       "npm"
