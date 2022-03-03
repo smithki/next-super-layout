@@ -1,3 +1,15 @@
+# v0.1.5 (Thu Mar 03 2022)
+
+#### ⚠️ Pushed to `main`
+
+- Minor build tweaks ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v0.1.4 (Tue Mar 01 2022)
 
 #### 🐛 Bug Fix
