@@ -35,8 +35,10 @@ async function build(format: 'cjs' | 'esm', ext: 'js' | 'mjs', doEmitTypeScriptD
     outfile: `dist/${format}/index.${ext}`,
     external: ['react'],
     bundle: true,
+    target: 'es6',
+    platform: 'neutral',
     format,
-    watch: process.argv.includes('--watch')
+    watch: isWatchMode
       ? {
           onRebuild: async (error) => {
             if (error) {
