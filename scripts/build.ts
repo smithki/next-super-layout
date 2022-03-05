@@ -1,6 +1,5 @@
 #!/usr/bin/env ts-node-script
 
-import glob from 'fast-glob';
 import esbuild from 'esbuild';
 import { Project } from 'ts-morph';
 
@@ -31,9 +30,9 @@ async function emitTypeScriptDeclaration() {
 
 async function build(format: 'cjs' | 'esm', ext: 'js' | 'mjs', doEmitTypeScriptDeclaration?: boolean) {
   await esbuild.build({
-    entryPoints: await glob(['src/**/*.{ts,tsx}', '!src/**/*.test.{ts,tsx}']),
+    entryPoints: ['src/index.ts'],
     outfile: `dist/${format}/index.${ext}`,
-    external: ['react'],
+    external: ['react', 'next'],
     bundle: true,
     target: 'es6',
     platform: 'neutral',
