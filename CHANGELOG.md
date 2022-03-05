@@ -1,3 +1,15 @@
+# v1.0.0 (Sat Mar 05 2022)
+
+#### 💥 Breaking Change
+
+- Better error handling (and V1 release) [#6](https://github.com/smithki/next-super-layout/pull/6) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v0.1.5 (Thu Mar 03 2022)
 
 #### ⚠️ Pushed to `main`
