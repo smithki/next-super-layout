@@ -58,7 +58,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
   return {
     // @ts-ignore - This is used internally; not exposed to public API.
-    __layoutOptions: { ...options },
+    __layoutOptions: { ...options, PageContext },
 
     wrapPage: (Page) => {
       return Object.assign(
@@ -92,17 +92,14 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
                   };
             }, [isCombinedLayout, currCtx, layoutProps]);
 
-            return (
-              <PageContext.Provider value>
-                <LayoutDataContext.Provider value={ctx}>
-                  {options.getLayout ? (
-                    options.getLayout(<Component {...rest} />, layoutProps)
-                  ) : (
-                    <Component {...rest} />
-                  )}
-                </LayoutDataContext.Provider>
-              </PageContext.Provider>
+            const page = (
+              <LayoutDataContext.Provider value={ctx}>
+                {options.getLayout ? options.getLayout(<Component {...rest} />, layoutProps) : <Component {...rest} />}
+              </LayoutDataContext.Provider>
             );
+
+            // For combined layouts, the `PageContext` is provided in `combineLayouts`
+            return isCombinedLayout ? page : <PageContext.Provider value>{page}</PageContext.Provider>;
           },
         },
       ) as WrappedPage;
@@ -174,7 +171,9 @@ async function defaultGetProps() {
   };
 }
 
-const getOptionsFromLayout = (layout: Layout<any>): CreateLayoutOptions<any> => (layout as any)['__layoutOptions'];
+const getOptionsFromLayout = (
+  layout: Layout<any>,
+): CreateLayoutOptions<any> & { PageContext: React.Context<boolean> } => (layout as any)['__layoutOptions'];
 
 /**
  * Combines layout objects (the result of `createLayout(...)`) into a singular layout.
@@ -224,9 +223,11 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
 
     getLayout: (page, data) => {
       const pagesCombined = layouts.reduceRight((element, l) => {
-        const layoutOptions = getOptionsFromLayout(l);
-        const layoutKey = `__layout:${layoutOptions.name}`;
-        return <>{layoutOptions.getLayout ? layoutOptions.getLayout(element, data[layoutKey]) : element}</>;
+        const { name, getLayout, PageContext } = getOptionsFromLayout(l);
+        const layoutKey = `__layout:${name}`;
+        return (
+          <PageContext.Provider value>{getLayout ? getLayout(element, data[layoutKey]) : element}</PageContext.Provider>
+        );
       }, <>{page}</>);
 
       return <>{pagesCombined}</>;
