@@ -1,3 +1,15 @@
+# v1.0.1 (Sat Mar 05 2022)
+
+#### 🐛 Bug Fix
+
+- Fix 'wrapPage()' error case [#7](https://github.com/smithki/next-super-layout/pull/7) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v1.0.0 (Sat Mar 05 2022)
 
 #### 💥 Breaking Change
