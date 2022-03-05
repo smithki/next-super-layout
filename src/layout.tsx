@@ -54,11 +54,9 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
   const layoutKey = `__layout:${options.name}`;
   const isCombinedLayout = options.name.startsWith('__combined');
 
-  const LayoutPageContext = /* @__PURE__ */ createContext<boolean>(false);
-
   return {
     // @ts-ignore - This is used internally; not exposed to public API.
-    __layoutOptions: options,
+    __layoutOptions: { ...options, LayoutPageContext },
 
     wrapPage: (Page) => {
       return Object.assign(
@@ -72,11 +70,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
             });
           }
 
-          return (
-            <LayoutPageContext.Provider value>
-              <Page {...props} />
-            </LayoutPageContext.Provider>
-          );
+          return <Page {...props} />;
         },
 
         {
@@ -139,15 +133,6 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
       const ctx = useContext(LayoutDataContext);
       const { pathname } = useRouter();
 
-      if (!useContext(LayoutPageContext)) {
-        throw createError('PAGE_WRAP_MISSING', {
-          errorContext: 'useData',
-          location: pathname,
-          layoutName: options.name,
-          message: 'Data for this layout unavailable because this page is not wrapped with wrapPage()',
-        });
-      }
-
       if (ctx[layoutKey] == null) {
         throw createError('DATA_UNAVAILABLE', {
           errorContext: 'useData',
@@ -155,6 +140,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
           layoutName: options.name,
           message: `Data for this layout unavailable for one of these reasons:
   - getData() is not defined for this layout.
+  - This page was not wrapped with wrapPage().
   - getStaticProps() or getServerSideProps() is not wrapped for this layout.
   - useData() may have been called within getLayout().
     Use the second \`data\` parameter given to getLayout() instead.`,
