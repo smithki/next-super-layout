@@ -1,3 +1,15 @@
+# v1.0.2 (Sat Mar 05 2022)
+
+#### 🐛 Bug Fix
+
+- Add 'PAGE_WRAP_MISSING' error back [#8](https://github.com/smithki/next-super-layout/pull/8) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v1.0.1 (Sat Mar 05 2022)
 
 #### 🐛 Bug Fix
