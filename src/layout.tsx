@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router.js';
 import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router.js';
 import React, { createContext, useContext, useMemo } from 'react';
 import { createError } from './exceptions';
 import { CreateLayoutOptions, Layout, LayoutData, PageWithLayout, WrappedPage } from './types';
@@ -54,9 +54,11 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
   const layoutKey = `__layout:${options.name}`;
   const isCombinedLayout = options.name.startsWith('__combined');
 
+  const PageContext = createContext(false);
+
   return {
     // @ts-ignore - This is used internally; not exposed to public API.
-    __layoutOptions: { ...options, LayoutPageContext },
+    __layoutOptions: { ...options },
 
     wrapPage: (Page) => {
       return Object.assign(
@@ -91,9 +93,15 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
             }, [isCombinedLayout, currCtx, layoutProps]);
 
             return (
-              <LayoutDataContext.Provider value={ctx}>
-                {options.getLayout ? options.getLayout(<Component {...rest} />, layoutProps) : <Component {...rest} />}
-              </LayoutDataContext.Provider>
+              <PageContext.Provider value>
+                <LayoutDataContext.Provider value={ctx}>
+                  {options.getLayout ? (
+                    options.getLayout(<Component {...rest} />, layoutProps)
+                  ) : (
+                    <Component {...rest} />
+                  )}
+                </LayoutDataContext.Provider>
+              </PageContext.Provider>
             );
           },
         },
@@ -133,6 +141,15 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
       const ctx = useContext(LayoutDataContext);
       const { pathname } = useRouter();
 
+      if (!useContext(PageContext)) {
+        throw createError('PAGE_WRAP_MISSING', {
+          errorContext: 'useData',
+          location: pathname,
+          layoutName: options.name,
+          message: 'Data for this layout unavailable because this page is not wrapped with wrapPage()',
+        });
+      }
+
       if (ctx[layoutKey] == null) {
         throw createError('DATA_UNAVAILABLE', {
           errorContext: 'useData',
@@ -140,7 +157,6 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
           layoutName: options.name,
           message: `Data for this layout unavailable for one of these reasons:
   - getData() is not defined for this layout.
-  - This page was not wrapped with wrapPage().
   - getStaticProps() or getServerSideProps() is not wrapped for this layout.
   - useData() may have been called within getLayout().
     Use the second \`data\` parameter given to getLayout() instead.`,
