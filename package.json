@@ -17,8 +17,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "yarn clean && melodist dev --outdir dist",
-    "build": "yarn clean && melodist build --outdir dist --no-minify",
+    "dev": "yarn clean && melodist dev --outdir dist --es-target es6",
+    "build": "yarn clean && melodist build --outdir dist --no-minify --es-target es6",
     "clean": "rimraf dist",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "test": "echo \"No unit tests... yet :(\" && exit 0",
