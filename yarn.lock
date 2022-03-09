@@ -3301,9 +3301,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"melodist@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "melodist@npm:0.4.3"
+"melodist@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "melodist@npm:0.5.0"
   dependencies:
     "@parcel/css": ~1.5.0
     "@parcel/watcher": ~2.0.5
@@ -3311,7 +3311,7 @@ __metadata:
     ts-morph: ~14.0.0
   bin:
     melodist: bin.js
-  checksum: 465580c2e5dea69ec636927a81adff120c8c43f06475a5fc2512624fc198550b461a757a3aa850c735107a11d8a23566450e8afd0f7f08638406004f158458c3
+  checksum: 70bb696121c5cf01371a569d181aaadca6a457dcafd92c48e1dce8c65a62f8da1e25140f2846f54a0374dfba9bfddb011cec47790b25e942166ed98007b0a5a5
   languageName: node
   linkType: hard
 
@@ -3526,7 +3526,7 @@ __metadata:
     eslint-plugin-prettier: ^3.1.4
     eslint-plugin-react: ^7.21.5
     eslint-plugin-react-hooks: ^4.2.0
-    melodist: ^0.4.3
+    melodist: ^0.5.0
     next: ^12.1.0
     prettier: ^2.2.0
     react: ^17.0.2
