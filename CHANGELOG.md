@@ -1,3 +1,15 @@
+# v1.0.5 (Wed Mar 09 2022)
+
+#### ⚠️ Pushed to `main`
+
+- Target ES6 ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v1.0.4 (Wed Mar 09 2022)
 
 #### 🐛 Bug Fix
