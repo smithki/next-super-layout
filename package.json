@@ -17,8 +17,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "yarn clean && ./scripts/build.ts --watch",
-    "build": "yarn clean && ./scripts/build.ts",
+    "dev": "yarn clean && melodist dev --outdir dist",
+    "build": "yarn clean && melodist build --outdir dist --no-minify",
     "clean": "rimraf dist",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "test": "echo \"No unit tests... yet :(\" && exit 0",
@@ -32,7 +32,6 @@
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "agadoo": "^2.0.0",
     "auto": "^10.32.6",
-    "esbuild": "^0.14.23",
     "eslint": "^7.14.0",
     "eslint-import-resolver-typescript": "^2.3.0",
     "eslint-plugin-import": "^2.22.1",
@@ -40,12 +39,11 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "melodist": "^0.5.0",
     "next": "^12.1.0",
     "prettier": "^2.2.0",
     "react": "^17.0.2",
     "rimraf": "^3.0.2",
-    "ts-morph": "^13.0.3",
-    "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   },
   "peerDependencies": {
