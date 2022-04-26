@@ -9,13 +9,6 @@ aliases: [
     "node_modules"
   ],
 
-  # List of Yarn cache paths that should be persisted to the
-  # CircleCI workspace cache.
-  &yarn-cache-paths [
-    ".yarn/cache",
-    ".yarn/unplugged",
-  ],
-
   # List of build output paths that should be persisted to the
   # CircleCI workspace.
   &build-output-paths [
@@ -23,7 +16,7 @@ aliases: [
   ],
 
   # NPM lockfile cache key (update "vN" => "vN+1" to cache-bust).
-  &dependency-cache-key "v1-dependency-cache-{{ checksum \"yarn.lock\" }}",
+  &dependency-cache-key "v1-dependency-cache-{{ checksum \"package-lock.json\" }}",
 
   &workspace-root "/home/circleci/project",
 
@@ -76,10 +69,7 @@ jobs:
           key: *dependency-cache-key
       - run:
           name: Install Module Dependencies
-          command: yarn install
-      - save_cache:
-          paths: *yarn-cache-paths
-          key: *dependency-cache-key
+          command: npm ci
       - persist_to_workspace:
           paths: *dependency-paths
           root: *workspace-root
@@ -92,7 +82,7 @@ jobs:
       - *attach-workspace
       - run:
           name: Lint source files
-          command: yarn run lint
+          command: npm run lint
 
   # Builds modules and persists the build output to the workspace.
   build:
@@ -102,7 +92,7 @@ jobs:
       - *attach-workspace
       - run:
           name: Build modules
-          command: yarn run build
+          command: npm run build
       - persist_to_workspace:
           paths: *build-output-paths
           root: *workspace-root
@@ -115,10 +105,10 @@ jobs:
       - *attach-workspace
       - run:
           name: Run unit tests
-          command: yarn run test
+          command: npm run test
       - run:
           name: Test tree-shaking
-          command: yarn agadoo
+          command: npx agadoo
       # For display in CircleCI Artifacts: https://circleci.com/docs/2.0/artifacts/
       - store_artifacts:
           path: coverage
@@ -131,7 +121,7 @@ jobs:
       - *attach-workspace
       - run:
           name: Publish to NPM
-          command: yarn auto shipit
+          command: npx auto shipit
 
 # --- Workflow definitions --------------------------------------------------- #
 
