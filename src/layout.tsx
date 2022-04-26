@@ -2,9 +2,15 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router.js';
 import React, { createContext, useContext, useMemo } from 'react';
 import { createError } from './exceptions';
-import { CreateLayoutOptions, Layout, LayoutData, PageWithLayout, WrappedPage } from './types';
-
-type UnwrapArray<T> = T extends (infer U)[] ? U : T;
+import {
+  CreateLayoutOptions,
+  Layout,
+  LayoutData,
+  PageWithLayout,
+  WrappedPage,
+  UnwrapArray,
+  CombinedLayout,
+} from './types';
 
 const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
 const LayoutDataContext = /* @__PURE__ */ createContext<any>({});
@@ -58,7 +64,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
   return {
     // @ts-ignore - This is used internally; not exposed to public API.
-    __layoutOptions: { ...options, PageContext },
+    __layoutMeta: { ...options, PageContext },
 
     wrapPage: (Page) => {
       return Object.assign(
@@ -171,9 +177,11 @@ async function defaultGetProps() {
   };
 }
 
-const getOptionsFromLayout = (
-  layout: Layout<any>,
-): CreateLayoutOptions<any> & { PageContext: React.Context<boolean> } => (layout as any)['__layoutOptions'];
+type LayoutMeta = CreateLayoutOptions<any> & {
+  PageContext: React.Context<boolean>;
+};
+
+const getMetaFromLayout = (layout: Layout<any> | CombinedLayout<any>): LayoutMeta => (layout as any)['__layoutMeta'];
 
 /**
  * Combines layout objects (the result of `createLayout(...)`) into a singular layout.
@@ -196,8 +204,8 @@ const getOptionsFromLayout = (
  * export const getServerSideProps = combinedLayout.wrapGetServerSideProps(...);
  * ```
  */
-export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
-  const layoutNames = layouts.map((l) => getOptionsFromLayout(l).name);
+export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T): CombinedLayout<T> {
+  const layoutNames = layouts.map((l) => getMetaFromLayout(l).name);
 
   // Validate `layouts` contains only unique values for `name`.
   if (new Set(layoutNames).size !== layoutNames.length) {
@@ -223,7 +231,7 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
 
     getLayout: (page, data) => {
       const pagesCombined = layouts.reduceRight((element, l) => {
-        const { name, getLayout, PageContext } = getOptionsFromLayout(l);
+        const { name, getLayout, PageContext } = getMetaFromLayout(l);
         const layoutKey = `__layout:${name}`;
         return (
           <PageContext.Provider value>{getLayout ? getLayout(element, data[layoutKey]) : element}</PageContext.Provider>
@@ -236,7 +244,7 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
     getData: async (ctx) => {
       const results = await Promise.all(
         layouts.map(async (l) => {
-          const layoutOptions = getOptionsFromLayout(l);
+          const layoutOptions = getMetaFromLayout(l);
           const layoutKey = `__layout:${layoutOptions.name}`;
           return { [layoutKey]: (await layoutOptions.getData?.(ctx)) ?? null };
         }),
@@ -252,11 +260,11 @@ export function combineLayouts<T extends Array<Layout<any>>>(...layouts: T) {
   return result as Omit<typeof result, 'useData'>;
 }
 
-const RenderLayout: React.FC<AppProps> = ({ Component, pageProps }) => {
+function RenderLayout({ Component, pageProps }: AppProps) {
   // Use the layout defined at the page level, if available...
   const getLayout = (Component as PageWithLayout).getLayout ?? ((C, P) => <C {...P} />);
   return <>{getLayout(Component, pageProps)}</>;
-};
+}
 
 RenderLayout.displayName = 'RenderLayout';
 
@@ -273,12 +281,12 @@ RenderLayout.displayName = 'RenderLayout';
  * }
  * ```
  */
-export const LayoutProvider: React.FC<AppProps> = (props) => {
+export function LayoutProvider(props: AppProps) {
   return (
     <LayoutProviderContext.Provider value>
       <RenderLayout {...props} />
     </LayoutProviderContext.Provider>
   );
-};
+}
 
 LayoutProvider.displayName = 'LayoutProvider';

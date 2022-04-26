@@ -37,4 +37,6 @@ export type Layout<Data = any> = {
   useData: () => Data;
 };
 
+export type UnwrapArray<T> = T extends (infer U)[] ? U : T;
+export type CombinedLayout<Data extends Array<any>> = Omit<Layout<LayoutData<UnwrapArray<Data>>>, 'useData'>;
 export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;

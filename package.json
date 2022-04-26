@@ -17,12 +17,12 @@
     "dist"
   ],
   "scripts": {
-    "dev": "yarn clean && melodist dev --outdir dist --es-target es6",
-    "build": "yarn clean && melodist build --outdir dist --no-minify --es-target es6",
+    "dev": "npm run clean && melodist dev --outdir dist --es-target es6",
+    "build": "npm run clean && melodist build --outdir dist --no-minify --es-target es6",
     "clean": "rimraf dist",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "test": "echo \"No unit tests... yet :(\" && exit 0",
-    "test:tree-shaking": "yarn build && agadoo"
+    "test:tree-shaking": "npm run build && agadoo"
   },
   "devDependencies": {
     "@ikscodes/eslint-config": "latest",
@@ -42,15 +42,14 @@
     "melodist": "^0.5.0",
     "next": "^12.1.0",
     "prettier": "^2.2.0",
-    "react": "^17.0.2",
+    "react": "^18.0.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.5.5"
   },
   "peerDependencies": {
     "next": "^12.1.0",
-    "react": "^17.0.2"
+    "react": "^18.0.0"
   },
-  "packageManager": "yarn@3.2.0",
   "prettier": "@ikscodes/prettier-config",
   "auto": {
     "plugins": [
