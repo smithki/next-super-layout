@@ -1,3 +1,15 @@
+# v2.0.0 (Tue Apr 26 2022)
+
+#### 💥 Breaking Change
+
+- Remove Yarn; cleanup TypeScript typings [#11](https://github.com/smithki/next-super-layout/pull/11) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v1.0.5 (Wed Mar 09 2022)
 
 #### ⚠️ Pushed to `main`
