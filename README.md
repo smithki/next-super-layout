@@ -114,6 +114,29 @@ function MyComponent() {
 }
 ```
 
+## Limitations
+
+The nature of Next.js as a universal JavaScript framework means that some trade-offs have to be made for `next-super-layout` in the spirit of simplicity. Most notably, `getData` functions defined in your templates are inevitably bundled into client-side code. This has two undesirable side-effects:
+
+1. Some unnecessary weight is added to your client-side bundle.
+2. `getData` can't invoke server-only Node APIs like [`fs`](https://nodejs.org/api/fs.html) due to [Edge-runtime](https://nextjs.org/docs/api-reference/edge-runtime) constraints.
+
+Because `getData` runs only on the server-side, the effects of #1 can be offset through [dead code elimination](https://en.wikipedia.org/wiki/Dead_code_elimination) by checking for `typeof window === 'undefined'`, like so:
+
+```tsx
+const myLayout = createLayout({
+  getData: async (ctx) => {
+    // At production build-time, this statement
+    // will be removed by the Next.js minifier.
+    if (typeof window === 'undefined') {
+      return { ... };
+    }
+  },
+});
+```
+
+#2 is a tougher nut to crack that may require some truly complex, under-the-hood tinkering in Next.js itself. Perhaps there's hope for a [custom SWC plugin](https://swc.rs/docs/usage/plugins) to modify `getData` definitions at build-time. For now, Next.js lacks support for configuring arbitrary SWC plugins — most likely for performance and/or stability reasons.
+
 ## ⚖️ License
 
 [MIT](./LICENSE)
