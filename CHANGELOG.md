@@ -1,3 +1,15 @@
+# v2.0.1 (Wed Apr 27 2022)
+
+#### 🐛 Bug Fix
+
+- Add 'Limitations' section to README [#12](https://github.com/smithki/next-super-layout/pull/12) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v2.0.0 (Tue Apr 26 2022)
 
 #### 💥 Breaking Change
