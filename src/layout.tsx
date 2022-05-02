@@ -17,15 +17,14 @@ const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
 const LayoutDataContext = /* @__PURE__ */ createContext<any>({});
 
 /**
- * Creates a generic view for a layout, complete with layout-specific props,
- * fetched at build and/or request time.
+ * Creates a generic layout view.
  *
  * @example
  * ```tsx
  * // layouts/my-layout.tsx
  * import { createLayout } from 'next-super-layout';
  *
- * const myLayout = createLayout({
+ * export const myLayout = createLayout({
  *   name: 'myLayout', // choose something unique from amongst all your layouts
  *
  *   getLayout: (page, data) => {
@@ -38,23 +37,31 @@ const LayoutDataContext = /* @__PURE__ */ createContext<any>({});
  *       <MyFooter />
  *     </>);
  *   },
+ * });
  *
- *   getData: async (ctx) => {
- *     // `ctx` is the `GetStaticPropsContext` object passed to `getStaticProps`.
- *     return { ... };
- *   },
+ * // layouts/my-layout.data.ts
+ * import { myLayout } from './my-layout'
+ *
+ * export const myLayoutData = myLayout.createDataFetcher(async (ctx) => {
+ *   // `ctx` is the `GetStaticPropsContext` object passed to `getStaticProps`.
+ *   return { ... };
  * });
  *
  * // pages/some/path.tsx
- * import { myLayout } from 'next-super-layout';
+ * import { createPageWrapper, createDataWrapper } from 'next-super-layout
+ * import { myLayout } from 'layouts/my-layout';
+ * import { myLayoutData } from 'layouts/my-layout.data';
  *
- * export default myLayout.wrapPage((props) => {
+ * const wrapPage = createPageWrapper(myLayout);
+ * const dataWrapper = createDataWrapper(myLayoutData);
+ *
+ * export default wrapPage((props) => {
  *   return <>{...}</>;
  * });
  *
- * export const getStaticProps = myLayout.wrapGetStaticProps(...);
+ * export const getStaticProps = dataWrapper.wrapGetStaticProps(...);
  * // or...
- * export const getServerSideProps = myLayout.wrapGetServerSideProps(...);
+ * export const getServerSideProps = dataWrapper.wrapGetServerSideProps(...);
  * ```
  */
 export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): Layout<Data> {
