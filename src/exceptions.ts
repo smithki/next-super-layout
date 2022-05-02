@@ -1,5 +1,5 @@
 interface ErrorMessageOptions {
-  errorContext: string;
+  errorContext?: string;
   location?: string;
   layoutName?: string;
   message: string;
@@ -12,9 +12,9 @@ export interface LayoutError extends Error {
 }
 
 function createErrorMessage(options: ErrorMessageOptions) {
-  const locationLabel = options.location ? ` -> ${options.location}` : '';
-  const layoutNameLabel = options.location ? ` -> ${options.layoutName}` : '';
-  return `[next-super-layout: ${options.errorContext}${locationLabel}${layoutNameLabel}] ${options.message}`;
+  const labels = [options.errorContext, options.location, options.layoutName].filter(Boolean).join(' -> ');
+  const prefixedLabel = labels ? `next-super-layout: ${labels}` : 'next-super-layout';
+  return `[${prefixedLabel}] ${options.message}`;
 }
 
 export function createError(code: string, options: ErrorMessageOptions) {

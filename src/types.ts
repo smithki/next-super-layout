@@ -7,36 +7,44 @@ export type PageWithLayout<Props = any> = ComponentType<Props> & {
   getLayout?: (Component: AppProps['Component'], pageProps: any) => ReactNode;
 };
 
+export type PageWrapperFn = <Props>(page: ComponentType<Props>) => WrappedPage<Props>;
+export type WrappedPage<Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<any> };
+
 export type GetLayoutFn<Data> = (page: ReactElement, data: Data) => ReactNode;
 
-export type WrappedPage<Data = any, Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<Data> };
+export type GetDataFn<Data> = (ctx: GetStaticPropsContext) => Data | Promise<Data>;
+
+export type GetStaticPropsWrapper = <
+  P extends { [key: string]: any } = { [key: string]: any },
+  Q extends ParsedUrlQuery = ParsedUrlQuery,
+>(
+  wrappedGetStaticProps?: GetStaticProps<P, Q>,
+) => GetStaticProps<P, Q>;
+
+export type GetServerSidePropsWrapper = <
+  P extends { [key: string]: any } = { [key: string]: any },
+  Q extends ParsedUrlQuery = ParsedUrlQuery,
+>(
+  wrappedGetServerSideProps?: GetServerSideProps<P, Q>,
+) => GetServerSideProps<P, Q>;
 
 export interface CreateLayoutOptions<Data> {
   name: string;
   getLayout?: GetLayoutFn<Data>;
-  getData?: (ctx: GetStaticPropsContext) => Data | Promise<Data>;
 }
 
 export type Layout<Data = any> = {
-  wrapPage: <Props>(page: ComponentType<Props>) => WrappedPage<Data, Props>;
-
-  wrapGetStaticProps: <
-    P extends { [key: string]: any } = { [key: string]: any },
-    Q extends ParsedUrlQuery = ParsedUrlQuery,
-  >(
-    wrappedGetStaticProps?: GetStaticProps<P, Q>,
-  ) => GetStaticProps<P, Q>;
-
-  wrapGetServerSideProps: <
-    P extends { [key: string]: any } = { [key: string]: any },
-    Q extends ParsedUrlQuery = ParsedUrlQuery,
-  >(
-    wrappedGetServerSideProps?: GetServerSideProps<P, Q>,
-  ) => GetServerSideProps<P, Q>;
-
+  name: string;
   useData: () => Data;
+  createDataFetcher: (fetcher: GetDataFn<Data>) => DataLayout;
 };
 
-export type UnwrapArray<T> = T extends (infer U)[] ? U : T;
-export type CombinedLayout<Data extends Array<any>> = Omit<Layout<LayoutData<UnwrapArray<Data>>>, 'useData'>;
+export type DataLayout = {
+  getData: GetStaticProps;
+};
+
+export type LayoutMeta = CreateLayoutOptions<any> & {
+  PageContext: React.Context<boolean>;
+};
+
 export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;
