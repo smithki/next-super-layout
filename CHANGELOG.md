@@ -1,3 +1,15 @@
+# v3.0.0 (Mon May 02 2022)
+
+#### 💥 Breaking Change
+
+- V3: better separation of client & server logic [#13](https://github.com/smithki/next-super-layout/pull/13) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v2.0.1 (Wed Apr 27 2022)
 
 #### 🐛 Bug Fix
