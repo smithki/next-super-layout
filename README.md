@@ -71,22 +71,22 @@ export const myLayoutData = myLayout.createDataFetcher(async (ctx) => {
 
 Then, we'll revist our Next.js page to inject our data:
 
-```tsx
-// pages/some/path.tsx
+```diff
+  // pages/some/path.tsx
 - import { createPageWrapper } from 'next-super-layout';
 + import { createPageWrapper, createDataWrapper } from 'next-super-layout';
-import { myLayout } from './layouts/my-layout';
+  import { myLayout } from './layouts/my-layout';
 + import { myLayoutData} from './layouts/my-layout.data';
 
-const wrapPage = createPageWrapper(myLayout);
+  const wrapPage = createPageWrapper(myLayout);
 + const dataWrapper = createDataWrapper(myLayoutData);
 
-export default wrapPage((props) => {
-  return <>{...}</>;
-});
+  export default wrapPage((props) => {
+    return <>{...}</>;
+  });
 
 + export const getStaticProps = dataWrapper.wrapGetStaticProps(...);
-// or...
+  // or...
 + export const getServerSideProps = dataWrapper.wrapGetServerSideProps(...);
 ```
 
@@ -111,11 +111,11 @@ _Voila!_
 
 With `next-super-layout`, it's effortless to compose multiple layouts together using the `combineLayouts` function:
 
-```tsx
-// pages/some/path.tsx
-import { createPageWrapper, createDataWrapper } from 'next-super-layout';
-import { myLayout } from './layouts/my-layout';
-import { myLayoutData} from './layouts/my-layout.data';
+```diff
+  // pages/some/path.tsx
+  import { createPageWrapper, createDataWrapper } from 'next-super-layout';
+  import { myLayout } from './layouts/my-layout';
+  import { myLayoutData} from './layouts/my-layout.data';
 
 + import { myOtherLayout } from './layouts/my-other-layout';
 + import { myOtherLayoutData} from './layouts/my-other-layout.data';
@@ -125,13 +125,13 @@ import { myLayoutData} from './layouts/my-layout.data';
 - const dataWrapper = createDataWrapper(myLayoutData);
 + const dataWrapper = createDataWrapper(myLayoutData, myOtherLayoutData);
 
-export default wrapPage((props) => {
-  return <>{...}</>;
-});
+  export default wrapPage((props) => {
+    return <>{...}</>;
+  });
 
-export const getStaticProps = dataWrapper.wrapGetStaticProps(...);
-// or...
-export const getServerSideProps = dataWrapper.wrapGetServerSideProps(...);
+  export const getStaticProps = dataWrapper.wrapGetStaticProps(...);
+  // or...
+  export const getServerSideProps = dataWrapper.wrapGetServerSideProps(...);
 ```
 
 ### Using layout data
