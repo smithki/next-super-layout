@@ -1,3 +1,15 @@
+# v3.0.1 (Wed May 04 2022)
+
+#### 🐛 Bug Fix
+
+- Fix: compositional layout data missing client-side [#14](https://github.com/smithki/next-super-layout/pull/14) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.0.0 (Mon May 02 2022)
 
 #### 💥 Breaking Change
