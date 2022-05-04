@@ -72,6 +72,14 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
     useData: () => {
       const ctx = useContext(LayoutDataContext);
+
+      // TODO: Investigate why `ctx` contains only the last element of layout
+      // data when composing layouts together. For now, this works:
+      const layoutData =
+        typeof window === 'undefined'
+          ? ctx[options.name]
+          : (window as any)?.__NEXT_DATA__?.props?.pageProps?.__next_super_layout?.[options.name];
+
       const { pathname } = useRouter();
 
       if (!useContext(PageContext)) {
@@ -86,7 +94,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
         });
       }
 
-      if (ctx[options.name] == null) {
+      if (layoutData == null) {
         throw createError('DATA_UNAVAILABLE', {
           errorContext: 'useData',
           location: pathname,
@@ -97,7 +105,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
         });
       }
 
-      return ctx[options.name];
+      return layoutData;
     },
 
     createDataFetcher: (getData) => {
@@ -169,24 +177,16 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
             const { name, getLayout, PageContext } = getLayoutMeta(l);
             const { [name]: layoutProps } = pageProps.__next_super_layout;
 
-            const currCtx = useContext(LayoutDataContext);
-            const ctx: any = useMemo(() => {
-              return {
-                ...currCtx,
-                [name]: layoutProps,
-              };
-            }, []);
-
             return (
-              <PageContext.Provider value>
-                <LayoutDataContext.Provider value={ctx}>
-                  {getLayout ? getLayout(element, layoutProps) : element}
-                </LayoutDataContext.Provider>
-              </PageContext.Provider>
+              <PageContext.Provider value>{getLayout ? getLayout(element, layoutProps) : element}</PageContext.Provider>
             );
           }, <PageComponent {...pageProps} />);
 
-          return <>{pagesCombined}</>;
+          return (
+            <LayoutDataContext.Provider value={pageProps.__next_super_layout}>
+              {pagesCombined}
+            </LayoutDataContext.Provider>
+          );
         },
       },
     );
