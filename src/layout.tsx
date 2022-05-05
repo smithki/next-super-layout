@@ -82,7 +82,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
   - The page is not wrapped with the result of createPageWrapper().
   - useData() may have been called from within getLayout() itself, which is a mistake!
     Instead, use the second \`data\` parameter given to getLayout(page, data).
-                                                                        ^^^^
+                                                                      ^^^^
   - No data fetcher is assigned to this layout.
   - getStaticProps() or getServerSideProps() is not wrapped with the result of createDataWrapper().`,
         });
