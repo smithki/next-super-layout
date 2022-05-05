@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router.js';
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext } from 'react';
 import { createError } from './exceptions';
 import {
   CreateLayoutOptions,
@@ -14,7 +14,6 @@ import {
 } from './types';
 
 const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
-const LayoutDataContext = /* @__PURE__ */ createContext<any>({});
 
 /**
  * Creates a generic layout view.
@@ -65,47 +64,31 @@ const LayoutDataContext = /* @__PURE__ */ createContext<any>({});
  * ```
  */
 export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): Layout<Data> {
-  const PageContext = createContext(false);
+  const PageContext = createContext<Data | null>(null);
 
   const layout: Layout<Data> = {
     name: options.name,
 
     useData: () => {
-      const ctx = useContext(LayoutDataContext);
-
-      // TODO: Investigate why `ctx` contains only the last element of layout
-      // data when composing layouts together. For now, this works:
-      const layoutData =
-        typeof window === 'undefined'
-          ? ctx[options.name]
-          : (window as any)?.__NEXT_DATA__?.props?.pageProps?.__next_super_layout?.[options.name];
-
+      const ctx = useContext(PageContext);
       const { pathname } = useRouter();
 
-      if (!useContext(PageContext)) {
-        throw createError('PAGE_WRAP_MISSING', {
-          errorContext: 'useData',
-          location: pathname,
-          layoutName: options.name,
-          message: `Data for this layout is unavailable for one of the following reasons:
-  - The page component isn't wrapped with the result of createPageWrapper().
-  - useData() may have been called from within getLayout() itself, which is a mistake!
-    Instead, use the second \`data\` parameter given to getLayout().`,
-        });
-      }
-
-      if (layoutData == null) {
+      if (ctx == null) {
         throw createError('DATA_UNAVAILABLE', {
           errorContext: 'useData',
           location: pathname,
           layoutName: options.name,
           message: `Data for this layout is unavailable for one of the following reasons:
+  - The page is not wrapped with the result of createPageWrapper().
+  - useData() may have been called from within getLayout() itself, which is a mistake!
+    Instead, use the second \`data\` parameter given to getLayout(page, data).
+                                                                        ^^^^
   - No data fetcher is assigned to this layout.
-  - getStaticProps() or getServerSideProps() is not wrapped for this layout.`,
+  - getStaticProps() or getServerSideProps() is not wrapped with the result of createDataWrapper().`,
         });
       }
 
-      return layoutData;
+      return ctx;
     },
 
     createDataFetcher: (getData) => {
@@ -115,9 +98,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
           return {
             props: {
-              __next_super_layout: {
-                [options.name]: data,
-              },
+              [`__next_super_layout:${options.name}`]: data,
             },
           };
         },
@@ -175,18 +156,16 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
         getLayout: (PageComponent: any, pageProps: any) => {
           const pagesCombined = layouts.reduceRight((element, l) => {
             const { name, getLayout, PageContext } = getLayoutMeta(l);
-            const { [name]: layoutProps } = pageProps.__next_super_layout;
+            const layoutProps = pageProps[`__next_super_layout:${name}`];
 
             return (
-              <PageContext.Provider value>{getLayout ? getLayout(element, layoutProps) : element}</PageContext.Provider>
+              <PageContext.Provider value={layoutProps}>
+                {getLayout ? getLayout(element, layoutProps) : element}
+              </PageContext.Provider>
             );
           }, <PageComponent {...pageProps} />);
 
-          return (
-            <LayoutDataContext.Provider value={pageProps.__next_super_layout}>
-              {pagesCombined}
-            </LayoutDataContext.Provider>
-          );
+          return <>{pagesCombined}</>;
         },
       },
     );
@@ -217,10 +196,6 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
           props: {
             ...(acc.props ?? {}),
             ...(ssgConfig.props ?? {}),
-            __next_super_layout: {
-              ...(acc.props?.__next_super_layout ?? {}),
-              ...(ssgConfig.props?.__next_super_layout ?? {}),
-            },
           },
         };
       }, {} as any);
