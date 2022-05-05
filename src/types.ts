@@ -44,7 +44,7 @@ export type DataLayout = {
 };
 
 export type LayoutMeta = CreateLayoutOptions<any> & {
-  PageContext: React.Context<boolean>;
+  PageContext: React.Context<any>;
 };
 
 export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;
