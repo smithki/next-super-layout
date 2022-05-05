@@ -1,3 +1,15 @@
+# v3.0.3 (Thu May 05 2022)
+
+#### ⚠️ Pushed to `main`
+
+- Fix error message formatting ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.0.2 (Thu May 05 2022)
 
 #### 🐛 Bug Fix
