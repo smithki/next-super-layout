@@ -12,7 +12,7 @@ import {
   DataLayout,
 } from './types';
 
-const PageContext = createContext<any>(undefined);
+const PageContext = /* @__PURE__ */ createContext<any>(undefined);
 
 /**
  * Creates a generic layout view.
