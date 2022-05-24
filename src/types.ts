@@ -1,15 +1,15 @@
 import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ComponentType, ReactElement, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 export type PageWithLayout<Props = any> = ComponentType<Props> & {
-  ['__next_super_layout:getLayout']?: (node: React.ReactElement<any>) => ReactNode;
+  ['__next_super_layout:getLayout']?: (node: JSX.Element) => JSX.Element;
 };
 
 export type PageWrapperFn = <Props>(page: ComponentType<Props>) => WrappedPage<Props>;
 export type WrappedPage<Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<any> };
 
-export type GetLayoutFn<Data> = (page: ReactElement, data: Data) => ReactNode;
+export type GetLayoutFn<Data> = (page: JSX.Element, data: Data) => ReactNode;
 
 export type GetDataFn<Data> = (ctx: GetStaticPropsContext) => Data | Promise<Data>;
 

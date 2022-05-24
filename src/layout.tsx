@@ -113,9 +113,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 }
 
 export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): PageWrapperFn {
-  const isCombinedLayout = layouts.length > 1;
-
-  if (isCombinedLayout) {
+  if (layouts.length > 1) {
     const layoutNames = layouts.map((l) => getLayoutMeta(l).name);
 
     // Validate `layouts` contains only unique values for `name`.
@@ -153,7 +151,7 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
       },
 
       {
-        '__next_super_layout:getLayout': (node: React.ReactElement<any>) => {
+        '__next_super_layout:getLayout': (node: JSX.Element) => {
           const pagesCombined = layouts.reduceRight((element, l) => {
             const { name, getLayout, PageContext } = getLayoutMeta(l);
             const layoutProps = node.props[`__next_super_layout:${name}`];
@@ -223,7 +221,6 @@ function RenderLayout({ children }: PropsWithChildren<any>) {
     if (React.isValidElement(node)) {
       const Component = node.type as PageWithLayout;
       if (Component['__next_super_layout:getLayout']) {
-        console.log('here', node);
         return Component['__next_super_layout:getLayout'](node);
       }
     }
