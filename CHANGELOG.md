@@ -1,3 +1,15 @@
+# v3.1.0 (Tue May 24 2022)
+
+#### 🚀 Enhancement
+
+- v3.1 [#17](https://github.com/smithki/next-super-layout/pull/17) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.0.3 (Thu May 05 2022)
 
 #### ⚠️ Pushed to `main`
