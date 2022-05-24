@@ -1,3 +1,15 @@
+# v3.1.1 (Tue May 24 2022)
+
+#### ⚠️ Pushed to `main`
+
+- Update 'PageWrapperFn' type to include default props definition ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.1.0 (Tue May 24 2022)
 
 #### 🚀 Enhancement
