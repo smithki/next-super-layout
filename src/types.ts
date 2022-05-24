@@ -1,17 +1,9 @@
 import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from 'next';
-import type { AppProps } from 'next/app';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ComponentType, ReactElement, ReactNode } from 'react';
+import type { ComponentType } from 'react';
 
-export type PageWithLayout<Props = any> = ComponentType<Props> & {
-  getLayout?: (Component: AppProps['Component'], pageProps: any) => ReactNode;
-};
-
-export type PageWrapperFn = <Props>(page: ComponentType<Props>) => WrappedPage<Props>;
-export type WrappedPage<Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<any> };
-
-export type GetLayoutFn<Data> = (page: ReactElement, data: Data) => ReactNode;
-
+export type PageWrapperFn = <Props>(page: ComponentType<Props>) => ComponentType<Props>;
+export type GetLayoutFn<Data> = (page: JSX.Element, data: Data) => JSX.Element;
 export type GetDataFn<Data> = (ctx: GetStaticPropsContext) => Data | Promise<Data>;
 
 export type GetStaticPropsWrapper = <
@@ -43,8 +35,16 @@ export type DataLayout = {
   getData: GetStaticProps;
 };
 
-export type LayoutMeta = CreateLayoutOptions<any> & {
-  PageContext: React.Context<any>;
+export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;
+
+// --- DEPRECATED ----------------------------------------------------------- //
+
+// TODO: remove these in v4
+
+/** @deprecated */
+export type PageWithLayout<Props = any> = ComponentType<Props> & {
+  ['__next_super_layout:getLayout']?: (node: JSX.Element) => JSX.Element;
 };
 
-export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;
+/** @deprecated */
+export type WrappedPage<Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<any> };

@@ -92,21 +92,6 @@ Then, we'll revist our Next.js page to inject our data:
 
 Should you need to fetch additional data for your page, you can define a page-specific `getStaticProps` or `getServerSideProps` function, then pass it to `wrapGetStaticProps` or `wrapGetServerSideProps`, respectively.
 
-### Connecting `next-super-layout` to your Next.js application
-
-To make use of our layout-wrapped pages, we'll need to define a custom Next.js `_app`. Don't worry, it's pretty easy:
-
-```tsx
-// pages/_app
-import { LayoutProvider } from 'next-super-layout';
-
-export default function App(props) {
-  return <LayoutProvider {...props} />;
-}
-```
-
-_Voila!_
-
 ### Composing layouts
 
 With `next-super-layout`, it's effortless to compose multiple layouts together using the `combineLayouts` function:

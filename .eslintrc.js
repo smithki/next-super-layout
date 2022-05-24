@@ -37,6 +37,7 @@ module.exports = {
     'react/prefer-stateless-function': 0,
     'react/require-default-props': 0,
     'react/no-unused-prop-types': 0,
+    'react/destructuring-assignment': 0,
 
     // TypeScript rules
     '@typescript-eslint/ban-types': 0,

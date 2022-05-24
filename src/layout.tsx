@@ -1,19 +1,18 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router.js';
 import React, { createContext, useContext } from 'react';
-import { createError } from './exceptions';
+import { canUseDOM } from './constants';
+import { createError, createWarning } from './errors-warnings';
 import {
   CreateLayoutOptions,
   Layout,
-  PageWithLayout,
-  LayoutMeta,
   PageWrapperFn,
   GetStaticPropsWrapper,
   GetServerSidePropsWrapper,
   DataLayout,
 } from './types';
 
-const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
+const PageContext = /* @__PURE__ */ createContext<any>(undefined);
 
 /**
  * Creates a generic layout view.
@@ -64,8 +63,6 @@ const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
  * ```
  */
 export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): Layout<Data> {
-  const PageContext = createContext<Data | null>(null);
-
   const layout: Layout<Data> = {
     name: options.name,
 
@@ -75,20 +72,31 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
       if (ctx == null) {
         throw createError('DATA_UNAVAILABLE', {
-          errorContext: 'useData',
+          context: 'useData',
           location: pathname,
-          layoutName: options.name,
-          message: `Data for this layout is unavailable for one of the following reasons:
-  - The page is not wrapped with the result of createPageWrapper().
+          layout: options.name,
+          message: `Layout data is inaccessible for one of the following reasons:
+  - This page is not wrapped with the result of createPageWrapper().
   - useData() may have been called from within getLayout() itself, which is a mistake!
     Instead, use the second \`data\` parameter given to getLayout(page, data).
-                                                                      ^^^^
-  - No data fetcher is assigned to this layout.
+                                                                      ^^^^`,
+        });
+      }
+
+      const value = ctx?.[getLayoutKey(options.name)];
+
+      if (value == null) {
+        throw createError('DATA_UNAVAILABLE', {
+          context: 'useData',
+          location: pathname,
+          layout: options.name,
+          message: `Layout data is inaccessible for one of the following reasons:
+  - A data fetcher is not assigned to this layout.
   - getStaticProps() or getServerSideProps() is not wrapped with the result of createDataWrapper().`,
         });
       }
 
-      return ctx;
+      return value;
     },
 
     createDataFetcher: (getData) => {
@@ -98,7 +106,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
           return {
             props: {
-              [`__next_super_layout:${options.name}`]: data,
+              [getLayoutKey(options.name)]: data,
             },
           };
         },
@@ -107,15 +115,13 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
     },
   };
 
-  setLayoutMeta(layout, { ...options, PageContext });
+  setLayoutMeta(layout, options);
 
   return layout;
 }
 
 export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): PageWrapperFn {
-  const isCombinedLayout = layouts.length > 1;
-
-  if (isCombinedLayout) {
+  if (layouts.length > 1) {
     const layoutNames = layouts.map((l) => getLayoutMeta(l).name);
 
     // Validate `layouts` contains only unique values for `name`.
@@ -130,7 +136,7 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
       const duplicates = Object.keys(uniq).filter((a) => uniq[a] > 1);
 
       throw createError('COMBINED_LAYOUT_NAME_CONFLICT', {
-        errorContext: 'createPageWrapper',
+        context: 'createPageWrapper',
         message: `Layouts must have unique \`name\` values to be combinable. Conflicting name(s) found: ${duplicates.join(
           ', ',
         )}`,
@@ -139,36 +145,17 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
   }
 
   const pageWrapper: PageWrapperFn = (Page) => {
-    return Object.assign(
-      (props: any) => {
-        // Raise an error if a page is implemented without
-        // <LayoutProvider> wrapping the Next.js _app
-        if (!useContext(LayoutProviderContext)) {
-          throw createError('LAYOUT_PROVIDER_NOT_IMPLEMENTED', {
-            message: 'Before layouts can be utilized, you must wrap your Next.js `_app` with <LayoutProvider>',
-          });
-        }
+    return (props: any) => {
+      const pagesCombined = layouts.reduceRight((element, l) => {
+        const { name, getLayout } = getLayoutMeta(l);
+        const layoutProps = props[getLayoutKey(name)];
+        return getLayout ? getLayout(element, layoutProps) : element;
+      }, <Page {...props} />);
 
-        return <Page {...props} />;
-      },
+      // TODO: merge with instance of `PageContext.Provider` found higher in the React tree?
 
-      {
-        getLayout: (PageComponent: any, pageProps: any) => {
-          const pagesCombined = layouts.reduceRight((element, l) => {
-            const { name, getLayout, PageContext } = getLayoutMeta(l);
-            const layoutProps = pageProps[`__next_super_layout:${name}`];
-
-            return (
-              <PageContext.Provider value={layoutProps}>
-                {getLayout ? getLayout(element, layoutProps) : element}
-              </PageContext.Provider>
-            );
-          }, <PageComponent {...pageProps} />);
-
-          return <>{pagesCombined}</>;
-        },
-      },
-    );
+      return <PageContext.Provider value={props}>{pagesCombined}</PageContext.Provider>;
+    };
   };
 
   return pageWrapper;
@@ -208,17 +195,29 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
   };
 }
 
-// --- App connectors ------------------------------------------------------- //
+// --- Utilities ------------------------------------------------------------ //
 
-function RenderLayout({ Component, pageProps }: AppProps) {
-  // Use the layout defined at the page level, if available...
-  const getLayout = (Component as PageWithLayout).getLayout ?? ((C, P) => <C {...P} />);
-  return <>{getLayout(Component, pageProps)}</>;
+function setLayoutMeta(layout: Layout<any>, meta: CreateLayoutOptions<any>) {
+  return ((layout as any)['__layoutMeta'] = meta);
 }
 
-RenderLayout.displayName = 'RenderLayout';
+function getLayoutMeta(layout: Layout<any>): CreateLayoutOptions<any> {
+  return (layout as any)['__layoutMeta'];
+}
+
+function getLayoutKey(name: string) {
+  return `__next_super_layout:${name}`;
+}
+
+// --- DEPRECATED ----------------------------------------------------------- //
+
+// TODO: remove this in v4
 
 /**
+ * @deprecated - This provider is no longer required to use `next-super-layout`.
+ *
+ * ---
+ *
  * Renders a page with layout data. For use within a custom NextJS `_app` component.
  *
  * @example
@@ -231,22 +230,16 @@ RenderLayout.displayName = 'RenderLayout';
  * }
  * ```
  */
-export function LayoutProvider(props: AppProps) {
-  return (
-    <LayoutProviderContext.Provider value>
-      <RenderLayout {...props} />
-    </LayoutProviderContext.Provider>
-  );
+export function LayoutProvider({ Component, pageProps }: AppProps) {
+  if (!canUseDOM) {
+    createWarning('DEPRECATION_NOTICE', {
+      context: '<LayoutProvider>',
+      message:
+        'It is no longer required to wrap your NextJS `_app` with <LayoutProvider>. The <LayoutProvider> component will be removed in v4.',
+    }).logOnce();
+  }
+
+  return <Component {...pageProps} />;
 }
 
 LayoutProvider.displayName = 'LayoutProvider';
-
-// --- Utilities ------------------------------------------------------------ //
-
-function setLayoutMeta(layout: Layout<any>, meta: LayoutMeta) {
-  return ((layout as any)['__layoutMeta'] = meta);
-}
-
-function getLayoutMeta(layout: Layout<any>): LayoutMeta {
-  return (layout as any)['__layoutMeta'];
-}

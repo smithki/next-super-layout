@@ -1,3 +1,3 @@
 export * from './layout';
 export * from './types';
-export { LayoutErrorCode, LayoutError } from './exceptions';
+export { LayoutErrorCode, LayoutError, LayoutWarningCode, LayoutWarning } from './errors-warnings';
