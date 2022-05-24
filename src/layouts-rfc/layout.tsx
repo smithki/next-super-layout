@@ -1,19 +1,15 @@
-import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router.js';
-import React, { createContext, PropsWithChildren, useContext } from 'react';
-import { createError } from './exceptions';
+import React, { createContext, useContext } from 'react';
+import { createError } from '../exceptions';
 import {
   CreateLayoutOptions,
   Layout,
-  PageWithLayout,
   LayoutMeta,
   PageWrapperFn,
   GetStaticPropsWrapper,
   GetServerSidePropsWrapper,
   DataLayout,
-} from './types';
-
-const LayoutProviderContext = /* @__PURE__ */ createContext<boolean>(false);
+} from '../types';
 
 /**
  * Creates a generic layout view.
@@ -137,36 +133,20 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
   }
 
   const pageWrapper: PageWrapperFn = (Page) => {
-    return Object.assign(
-      (props: any) => {
-        // Raise an error if a page is implemented without
-        // <LayoutProvider> wrapping the Next.js _app
-        if (!useContext(LayoutProviderContext)) {
-          throw createError('LAYOUT_PROVIDER_NOT_IMPLEMENTED', {
-            message: 'Before layouts can be utilized, you must wrap your Next.js `_app` with <LayoutProvider>',
-          });
-        }
+    return (props: any) => {
+      const pagesCombined = layouts.reduceRight((element, l) => {
+        const { name, getLayout, PageContext } = getLayoutMeta(l);
+        const layoutProps = props[`__next_super_layout:${name}`];
 
-        return <Page {...props} />;
-      },
+        return (
+          <PageContext.Provider value={layoutProps}>
+            {getLayout ? getLayout(element, layoutProps) : element}
+          </PageContext.Provider>
+        );
+      }, <Page {...props} />);
 
-      {
-        '__next_super_layout:getLayout': (node: JSX.Element) => {
-          const pagesCombined = layouts.reduceRight((element, l) => {
-            const { name, getLayout, PageContext } = getLayoutMeta(l);
-            const layoutProps = node.props[`__next_super_layout:${name}`];
-
-            return (
-              <PageContext.Provider value={layoutProps}>
-                {getLayout ? getLayout(element, layoutProps) : element}
-              </PageContext.Provider>
-            );
-          }, node);
-
-          return <>{pagesCombined}</>;
-        },
-      },
-    );
+      return <>{pagesCombined}</>;
+    };
   };
 
   return pageWrapper;
@@ -205,52 +185,6 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
     wrapGetServerSideProps: getPropsWrapper as GetServerSidePropsWrapper,
   };
 }
-
-// --- App connectors ------------------------------------------------------- //
-
-function RenderLayout({ children }: PropsWithChildren<any>) {
-  const mappedChildren = React.Children.map(children, (node) => {
-    if (React.isValidElement(node)) {
-      const Component = node.type as PageWithLayout;
-      if (Component['__next_super_layout:getLayout']) {
-        return Component['__next_super_layout:getLayout'](node);
-      }
-    }
-    return node;
-  });
-
-  return <>{mappedChildren}</>;
-}
-
-RenderLayout.displayName = 'next-super-layout:RenderLayout';
-
-export type LayoutProviderProps = Pick<AppProps, 'Component' | 'pageProps'>;
-
-/**
- * Renders a page with layout data. For use within a custom NextJS `_app` component.
- *
- * @example
- * ```ts
- * // pages/_app
- * import { LayoutProvider } from 'next-super-layout';
- *
- * export default function App(props) {
- *   return <LayoutProvider {...props} />;
- * }
- * ```
- */
-export function LayoutProvider({ Component, pageProps }: LayoutProviderProps) {
-  return (
-    <LayoutProviderContext.Provider value>
-      <RenderLayout>
-        <Component {...pageProps} />
-      </RenderLayout>
-    </LayoutProviderContext.Provider>
-  );
-}
-
-LayoutProvider.displayName = 'next-super-layout:LayoutProvider';
-
 // --- Utilities ------------------------------------------------------------ //
 
 function setLayoutMeta(layout: Layout<any>, meta: LayoutMeta) {
