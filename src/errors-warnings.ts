@@ -47,7 +47,7 @@ export function createWarning(code: string, options: MessageOptions): LayoutWarn
   };
 }
 
-const warnOnce = Object.assign(
+const warnOnce = /* @__PURE__ */ Object.assign(
   (message: string) => {
     if (warnOnce.memory.has(message)) return;
     console.warn(message);
