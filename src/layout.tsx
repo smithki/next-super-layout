@@ -286,7 +286,9 @@ LayoutProviderServer.displayName = 'next-super-layout:LayoutProvider.Server';
 
 // TODO: Support for NextJS official layouts
 //       https://nextjs.org/blog/layouts-rfc
-export const LayoutProvider = Object.assign(LayoutProviderLegacy /* , { Server: LayoutProviderServer } */);
+export const LayoutProvider = /* @__PURE__ */ Object.assign(
+  LayoutProviderLegacy /* , { Server: LayoutProviderServer } */,
+);
 
 // --- Utilities ------------------------------------------------------------ //
 
