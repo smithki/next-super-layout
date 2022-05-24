@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router.js';
-import React, { createContext, useContext } from 'react';
+import React, { createContext, PropsWithChildren, useContext } from 'react';
 import { createError } from './exceptions';
 import {
   CreateLayoutOptions,
@@ -153,17 +153,20 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
       },
 
       {
-        getLayout: (PageComponent: any, pageProps: any) => {
+        '__next_super_layout:getLayout': (node: React.ReactElement<any>) => {
           const pagesCombined = layouts.reduceRight((element, l) => {
             const { name, getLayout, PageContext } = getLayoutMeta(l);
-            const layoutProps = pageProps[`__next_super_layout:${name}`];
+            const layoutProps = node.props[`__next_super_layout:${name}`];
+
+            // TODO: merge `layoutProps` with current `PageContext` value, if defined?
+            //       https://nextjs.org/blog/layouts-rfc
 
             return (
               <PageContext.Provider value={layoutProps}>
                 {getLayout ? getLayout(element, layoutProps) : element}
               </PageContext.Provider>
             );
-          }, <PageComponent {...pageProps} />);
+          }, node);
 
           return <>{pagesCombined}</>;
         },
@@ -210,13 +213,27 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
 
 // --- App connectors ------------------------------------------------------- //
 
-function RenderLayout({ Component, pageProps }: AppProps) {
-  // Use the layout defined at the page level, if available...
-  const getLayout = (Component as PageWithLayout).getLayout ?? ((C, P) => <C {...P} />);
-  return <>{getLayout(Component, pageProps)}</>;
+export type LayoutProps = Pick<AppProps, 'Component' | 'pageProps'>;
+
+function RenderLayout({ children }: PropsWithChildren<any>) {
+  // TODO: handle root layouts here when the new NextJS convention lands?
+  //       https://nextjs.org/blog/layouts-rfc
+
+  const mappedChildren = React.Children.map(children, (node) => {
+    if (React.isValidElement(node)) {
+      const Component = node.type as PageWithLayout;
+      if (Component['__next_super_layout:getLayout']) {
+        console.log('here', node);
+        return Component['__next_super_layout:getLayout'](node);
+      }
+    }
+    return node;
+  });
+
+  return <>{mappedChildren}</>;
 }
 
-RenderLayout.displayName = 'RenderLayout';
+RenderLayout.displayName = 'next-super-layout:RenderLayout';
 
 /**
  * Renders a page with layout data. For use within a custom NextJS `_app` component.
@@ -231,7 +248,33 @@ RenderLayout.displayName = 'RenderLayout';
  * }
  * ```
  */
-export function LayoutProvider(props: AppProps) {
+function LayoutProviderLegacy({ Component, pageProps }: LayoutProps) {
+  return (
+    <LayoutProviderContext.Provider value>
+      <RenderLayout>
+        <Component {...pageProps} />
+      </RenderLayout>
+    </LayoutProviderContext.Provider>
+  );
+}
+
+LayoutProviderLegacy.displayName = 'next-super-layout:LayoutProvider';
+
+/**
+ * W.I.P.
+ * Renders a page with layout data. For use within a custom NextJS `app/.../layout.js` component.
+ *
+ * @example
+ * ```ts
+ * // app/layout.js
+ * import { LayoutProvider } from 'next-super-layout';
+ *
+ * export default function RootLayout(props) {
+ *   return <LayoutProvider.Server {...props} />;
+ * }
+ * ```
+ */
+function LayoutProviderServer(props: PropsWithChildren<any>) {
   return (
     <LayoutProviderContext.Provider value>
       <RenderLayout {...props} />
@@ -239,7 +282,11 @@ export function LayoutProvider(props: AppProps) {
   );
 }
 
-LayoutProvider.displayName = 'LayoutProvider';
+LayoutProviderServer.displayName = 'next-super-layout:LayoutProvider.Server';
+
+// TODO: Support for NextJS official layouts
+//       https://nextjs.org/blog/layouts-rfc
+export const LayoutProvider = Object.assign(LayoutProviderLegacy /* , { Server: LayoutProviderServer } */);
 
 // --- Utilities ------------------------------------------------------------ //
 

@@ -1,10 +1,9 @@
 import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from 'next';
-import type { AppProps } from 'next/app';
 import type { ParsedUrlQuery } from 'querystring';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type PageWithLayout<Props = any> = ComponentType<Props> & {
-  getLayout?: (Component: AppProps['Component'], pageProps: any) => ReactNode;
+  ['__next_super_layout:getLayout']?: (node: React.ReactElement<any>) => ReactNode;
 };
 
 export type PageWrapperFn = <Props>(page: ComponentType<Props>) => WrappedPage<Props>;
