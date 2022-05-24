@@ -2,7 +2,7 @@ import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from '
 import type { ParsedUrlQuery } from 'querystring';
 import type { ComponentType } from 'react';
 
-export type PageWrapperFn = <Props>(page: ComponentType<Props>) => ComponentType<Props>;
+export type PageWrapperFn = <Props = {}>(page: ComponentType<Props>) => ComponentType<Props>;
 export type GetLayoutFn<Data> = (page: JSX.Element, data: Data) => JSX.Element;
 export type GetDataFn<Data> = (ctx: GetStaticPropsContext) => Data | Promise<Data>;
 
