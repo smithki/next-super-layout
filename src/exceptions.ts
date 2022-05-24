@@ -12,7 +12,7 @@ export interface LayoutError extends Error {
 }
 
 function createErrorMessage(options: ErrorMessageOptions) {
-  const labels = [options.errorContext, options.location, options.layoutName].filter(Boolean).join(' -> ');
+  const labels = [options.errorContext, options.location, options.layoutName].filter(Boolean).join(' ➜ ');
   const prefixedLabel = labels ? `next-super-layout: ${labels}` : 'next-super-layout';
   return `[${prefixedLabel}] ${options.message}`;
 }

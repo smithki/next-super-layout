@@ -1,9 +1,9 @@
 import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
-import type { ComponentType, ReactNode } from 'react';
+import type { ComponentType } from 'react';
 
 export type PageWrapperFn = <Props>(page: ComponentType<Props>) => ComponentType<Props>;
-export type GetLayoutFn<Data> = (page: JSX.Element, data: Data) => ReactNode;
+export type GetLayoutFn<Data> = (page: JSX.Element, data: Data) => JSX.Element;
 export type GetDataFn<Data> = (ctx: GetStaticPropsContext) => Data | Promise<Data>;
 
 export type GetStaticPropsWrapper = <
@@ -33,10 +33,6 @@ export type Layout<Data = any> = {
 
 export type DataLayout = {
   getData: GetStaticProps;
-};
-
-export type LayoutMeta = CreateLayoutOptions<any> & {
-  PageContext: React.Context<any>;
 };
 
 export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;

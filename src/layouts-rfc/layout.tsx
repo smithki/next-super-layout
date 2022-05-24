@@ -4,12 +4,13 @@ import { createError } from '../exceptions';
 import {
   CreateLayoutOptions,
   Layout,
-  LayoutMeta,
   PageWrapperFn,
   GetStaticPropsWrapper,
   GetServerSidePropsWrapper,
   DataLayout,
-} from '../types';
+} from './types';
+
+const PageContext = createContext<any>(null);
 
 /**
  * Creates a generic layout view.
@@ -60,8 +61,6 @@ import {
  * ```
  */
 export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): Layout<Data> {
-  const PageContext = createContext<Data | null>(null);
-
   const layout: Layout<Data> = {
     name: options.name,
 
@@ -74,17 +73,28 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
           errorContext: 'useData',
           location: pathname,
           layoutName: options.name,
-          message: `Data for this layout is unavailable for one of the following reasons:
-  - The page is not wrapped with the result of createPageWrapper().
+          message: `Layout data is inaccessible for one of the following reasons:
+  - This page is not wrapped with the result of createPageWrapper().
   - useData() may have been called from within getLayout() itself, which is a mistake!
     Instead, use the second \`data\` parameter given to getLayout(page, data).
-                                                                      ^^^^
-  - No data fetcher is assigned to this layout.
+                                                                      ^^^^`,
+        });
+      }
+
+      const value = ctx?.[getLayoutKey(options.name)];
+
+      if (value == null) {
+        throw createError('DATA_UNAVAILABLE', {
+          errorContext: 'useData',
+          location: pathname,
+          layoutName: options.name,
+          message: `Layout data is inaccessible for one of the following reasons:
+  - A data fetcher is not assigned to this layout.
   - getStaticProps() or getServerSideProps() is not wrapped with the result of createDataWrapper().`,
         });
       }
 
-      return ctx;
+      return value;
     },
 
     createDataFetcher: (getData) => {
@@ -94,7 +104,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
 
           return {
             props: {
-              [`__next_super_layout:${options.name}`]: data,
+              [getLayoutKey(options.name)]: data,
             },
           };
         },
@@ -103,7 +113,7 @@ export function createLayout<Data = any>(options: CreateLayoutOptions<Data>): La
     },
   };
 
-  setLayoutMeta(layout, { ...options, PageContext });
+  setLayoutMeta(layout, options);
 
   return layout;
 }
@@ -135,17 +145,12 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
   const pageWrapper: PageWrapperFn = (Page) => {
     return (props: any) => {
       const pagesCombined = layouts.reduceRight((element, l) => {
-        const { name, getLayout, PageContext } = getLayoutMeta(l);
-        const layoutProps = props[`__next_super_layout:${name}`];
-
-        return (
-          <PageContext.Provider value={layoutProps}>
-            {getLayout ? getLayout(element, layoutProps) : element}
-          </PageContext.Provider>
-        );
+        const { name, getLayout } = getLayoutMeta(l);
+        const layoutProps = props[getLayoutKey(name)];
+        return getLayout ? getLayout(element, layoutProps) : element;
       }, <Page {...props} />);
 
-      return <>{pagesCombined}</>;
+      return <PageContext.Provider value={props}>{pagesCombined}</PageContext.Provider>;
     };
   };
 
@@ -187,10 +192,14 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
 }
 // --- Utilities ------------------------------------------------------------ //
 
-function setLayoutMeta(layout: Layout<any>, meta: LayoutMeta) {
+function setLayoutMeta(layout: Layout<any>, meta: CreateLayoutOptions<any>) {
   return ((layout as any)['__layoutMeta'] = meta);
 }
 
-function getLayoutMeta(layout: Layout<any>): LayoutMeta {
+function getLayoutMeta(layout: Layout<any>): CreateLayoutOptions<any> {
   return (layout as any)['__layoutMeta'];
+}
+
+function getLayoutKey(name: string) {
+  return `__next_super_layout:${name}`;
 }
