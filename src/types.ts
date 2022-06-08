@@ -1,4 +1,4 @@
-import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext } from 'next';
+import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
 import type { ComponentType } from 'react';
 
@@ -37,14 +37,6 @@ export type DataLayout = {
 
 export type LayoutData<T extends Layout<any>> = T extends Layout<infer R> ? R : never;
 
-// --- DEPRECATED ----------------------------------------------------------- //
-
-// TODO: remove these in v4
-
-/** @deprecated */
-export type PageWithLayout<Props = any> = ComponentType<Props> & {
-  ['__next_super_layout:getLayout']?: (node: JSX.Element) => JSX.Element;
+export type PageWithLayout<Props = any> = NextPage<Props> & {
+  ['__next_super_layout:getLayout']?: (Component: NextPage<Props>, pageProps: Props) => JSX.Element;
 };
-
-/** @deprecated */
-export type WrappedPage<Props = any> = ComponentType<Props> & { getLayout?: GetLayoutFn<any> };
