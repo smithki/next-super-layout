@@ -1,3 +1,15 @@
+# v3.2.0 (Wed Jun 08 2022)
+
+#### 🚀 Enhancement
+
+- Un-deprecate `<LayoutProvider>` [#18](https://github.com/smithki/next-super-layout/pull/18) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.1.1 (Tue May 24 2022)
 
 #### ⚠️ Pushed to `main`
