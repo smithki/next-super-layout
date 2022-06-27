@@ -41,6 +41,8 @@ export const myLayout = createLayout({
 });
 ```
 
+> **NOTE** If you encounter a message from ESLint about "rules of hooks" violations because `"React component names must start with an uppercase letter"`, you can resolve this by changing `getLayout` to `GetLayout` (note the capitalization).
+
 Once we've created our layout, we'll connect it to a Next.js page using `createPageWrapper`:
 
 ```tsx
@@ -91,6 +93,8 @@ Then, we'll revist our Next.js page to inject our data:
 ```
 
 Should you need to fetch additional data for your page, you can define a page-specific `getStaticProps` or `getServerSideProps` function, then pass it to `wrapGetStaticProps` or `wrapGetServerSideProps`, respectively.
+
+> **NOTE** `wrapGetStaticProps` and `wrapGetServerSideProps` are available as a shorthand with `gSP` and `gSSP`, respectively.
 
 ### (Optional) Connecting `next-super-layout` to your Next.js `_app`
 
