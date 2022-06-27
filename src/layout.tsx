@@ -152,9 +152,10 @@ export function createPageWrapper<T extends Array<Layout<any>>>(...layouts: T): 
       const isWithinLayoutProvider = useContext(LayoutProviderContext);
       const pagesCombined = layouts.reduceRight(
         (element, l) => {
-          const { name, getLayout } = getLayoutMeta(l);
+          const { name, getLayout, GetLayout } = getLayoutMeta(l);
           const layoutProps = props[getLayoutKey(name)];
-          return getLayout ? getLayout(element, layoutProps) : element;
+          const getLayoutResolved = getLayout || GetLayout;
+          return getLayoutResolved ? getLayoutResolved(element, layoutProps) : element;
         },
         isWithinLayoutProvider ? <Component {...props} /> : <Page {...props} />,
       );
@@ -205,8 +206,13 @@ export function createDataWrapper<T extends Array<DataLayout>>(...fetchers: T) {
   };
 
   return {
+    // `getStaticProps` wrappers
     wrapGetStaticProps: getPropsWrapper as GetStaticPropsWrapper,
+    gSP: getPropsWrapper as GetStaticPropsWrapper, // shorthand for `wrapGetStaticProps`
+
+    // `getServerSideProps` wrappers
     wrapGetServerSideProps: getPropsWrapper as GetServerSidePropsWrapper,
+    gSSP: getPropsWrapper as GetServerSidePropsWrapper, // shorthand for `wrapGetServerSideProps`
   };
 }
 

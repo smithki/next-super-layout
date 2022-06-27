@@ -21,8 +21,24 @@ export type GetServerSidePropsWrapper = <
 ) => GetServerSideProps<P, Q>;
 
 export interface CreateLayoutOptions<Data> {
+  /**
+   * A unique key identifying this layout for a NextJS page.
+   */
   name: string;
+
+  /**
+   * Returns a React element wrapping a NextJS page with arbitrary UI.
+   */
   getLayout?: GetLayoutFn<Data>;
+
+  /**
+   * Returns a React element wrapping a NextJS page with arbitrary UI.
+   *
+   * @alias for `getLayout`
+   *
+   * NOTE: `getLayout` takes precedence over `GetLayout`.
+   */
+  GetLayout?: GetLayoutFn<Data>;
 }
 
 export type Layout<Data = any> = {
