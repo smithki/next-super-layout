@@ -1,3 +1,15 @@
+# v3.3.0 (Mon Jun 27 2022)
+
+#### 🚀 Enhancement
+
+- Better compat with rules of hooks [#19](https://github.com/smithki/next-super-layout/pull/19) ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.2.0 (Wed Jun 08 2022)
 
 #### 🚀 Enhancement
