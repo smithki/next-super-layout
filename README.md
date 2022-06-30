@@ -18,7 +18,8 @@ yarn add next-super-layout
 
 ## 🛠 Usage
 
-> ❕ These instructions are written for `>=v3.x`. For V2 docs, [start here!](./V2-DOCS.md)
+> **Note**
+> These instructions are written for `>=v3.x`. For V2 docs, [start here!](./V2-DOCS.md)
 
 Bootstrapping new layouts is a cinch using the `createLayout` function. Simply give your layout a `name` and describe some UI with `getLayout`:
 
@@ -41,7 +42,8 @@ export const myLayout = createLayout({
 });
 ```
 
-> **NOTE** If you encounter a message from ESLint about "rules of hooks" violations because `"React component names must start with an uppercase letter"`, you can resolve this by changing `getLayout` to `GetLayout` (note the capitalization).
+> **Note**
+> If you encounter messages from ESLint about "rules of hooks" violations because `"React component names must start with an uppercase letter"`, you can resolve this by changing `getLayout` to `GetLayout` (note the capitalization).
 
 Once we've created our layout, we'll connect it to a Next.js page using `createPageWrapper`:
 
@@ -71,7 +73,7 @@ export const myLayoutData = myLayout.createDataFetcher(async (ctx) => {
 });
 ```
 
-Then, we'll revist our Next.js page to inject our data:
+Then, we'll revist our Next.js page to inject our data with `createDataWrapper`:
 
 ```diff
   // pages/some/path.tsx
@@ -94,7 +96,8 @@ Then, we'll revist our Next.js page to inject our data:
 
 Should you need to fetch additional data for your page, you can define a page-specific `getStaticProps` or `getServerSideProps` function, then pass it to `wrapGetStaticProps` or `wrapGetServerSideProps`, respectively.
 
-> **NOTE** `wrapGetStaticProps` and `wrapGetServerSideProps` are available as a shorthand with `gSP` and `gSSP`, respectively.
+> **Note**
+> Shorthands for `wrapGetStaticProps` and `wrapGetServerSideProps` are also available: `gSP` and `gSSP`, respectively.
 
 ### (Optional) Connecting `next-super-layout` to your Next.js `_app`
 
@@ -113,7 +116,7 @@ _Voila!_
 
 ### Composing layouts
 
-With `next-super-layout`, it's effortless to compose multiple layouts together using the `combineLayouts` function:
+With `next-super-layout`, it's effortless to compose multiple layouts together using variadic parameters given to the`createPageWrapper` and `createDataWapper` functions:
 
 ```diff
   // pages/some/path.tsx
