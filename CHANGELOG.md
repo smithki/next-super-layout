@@ -1,3 +1,15 @@
+# v3.3.2 (Wed Jan 25 2023)
+
+#### ⚠️ Pushed to `main`
+
+- Update peer dependencies ([@smithki](https://github.com/smithki))
+
+#### Authors: 1
+
+- Ian K Smith ([@smithki](https://github.com/smithki))
+
+---
+
 # v3.3.1 (Thu Jun 30 2022)
 
 #### 🐛 Bug Fix
